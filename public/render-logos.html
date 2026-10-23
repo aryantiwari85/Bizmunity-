@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  body {
+    margin: 0;
+    padding: 20px;
+    background: transparent;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  #icon-logo {
+    display: inline-block;
+    width: 256px;
+    height: 256px;
+    border-radius: 64px;
+    background: linear-gradient(135deg, #FBBF24 0%, #F97316 40%, #EA580C 70%, #E11D48 100%);
+    box-shadow: 0 16px 36px rgba(234, 88, 12, 0.35);
+    position: relative;
+    overflow: hidden;
+  }
+  #icon-logo svg {
+    width: 100%;
+    height: 100%;
+  }
+  #horizontal-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 20px;
+    background: transparent;
+  }
+  #horizontal-logo .icon-box {
+    width: 64px;
+    height: 64px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #FBBF24 0%, #F97316 40%, #EA580C 70%, #E11D48 100%);
+    box-shadow: 0 6px 18px rgba(234, 88, 12, 0.3);
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  #horizontal-logo .text-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  #horizontal-logo .title {
+    font-size: 38px;
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    color: #18181b;
+    line-height: 1;
+  }
+  #horizontal-logo .tagline {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #EA580C;
+    margin-top: 5px;
+  }
+</style>
+</head>
+<body>
+
+<div id="icon-logo">
+  <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M 28 20 L 28 80" stroke="#FFFFFF" stroke-width="9" stroke-linecap="round" />
+    <path d="M 28 20 L 52 20 C 66 20 74 28 74 40 C 74 51 66 56 52 56 L 28 56" stroke="#FFFFFF" stroke-width="8.5" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M 28 56 L 56 56 C 71 56 80 64 80 72 C 80 80 70 80 54 80 L 28 80" stroke="#FFFFFF" stroke-width="8.5" stroke-linecap="round" stroke-linejoin="round" />
+    <circle cx="50" cy="38" r="3.5" fill="#FFFFFF" />
+    <circle cx="54" cy="68" r="3.5" fill="#FFFFFF" />
+  </svg>
+</div>
+
+<div style="height: 30px;"></div>
+
+<div id="horizontal-logo">
+  <div class="icon-box">
+    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: 100%;">
+      <path d="M 28 20 L 28 80" stroke="#FFFFFF" stroke-width="9" stroke-linecap="round" />
+      <path d="M 28 20 L 52 20 C 66 20 74 28 74 40 C 74 51 66 56 52 56 L 28 56" stroke="#FFFFFF" stroke-width="8.5" stroke-linecap="round" stroke-linejoin="round" />
+      <path d="M 28 56 L 56 56 C 71 56 80 64 80 72 C 80 80 70 80 54 80 L 28 80" stroke="#FFFFFF" stroke-width="8.5" stroke-linecap="round" stroke-linejoin="round" />
+      <circle cx="50" cy="38" r="3.5" fill="#FFFFFF" />
+      <circle cx="54" cy="68" r="3.5" fill="#FFFFFF" />
+    </svg>
+  </div>
+  <div class="text-box">
+    <div class="title">Bizmunity</div>
+    <div class="tagline">Business &amp; Creator Network</div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,6 @@
+{
+  "name": "Bizmunity",
+  "description": "A premium social platform where businesses, creators, founders, and communities connect.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

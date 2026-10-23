@@ -1,0 +1,252 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default deny all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-\\.]+$');
+    }
+
+    // 1. User Profiles
+    match /users/{userId} {
+      allow get: if isSignedIn() && isValidId(userId);
+      allow list: if isSignedIn();
+      allow create: if isOwner(userId) && isValidId(userId);
+      allow update: if isOwner(userId) && isValidId(userId);
+      allow delete: if false;
+    }
+
+    match /profiles/{userId} {
+      allow get, list: if isSignedIn();
+      allow create, update: if isOwner(userId) && isValidId(userId);
+      allow delete: if false;
+    }
+
+    // 2. Unique Username Registry (prevents duplicate usernames)
+    match /usernames/{username} {
+      allow get: if isValidId(username);
+      allow list: if false;
+      allow create: if isSignedIn() && request.resource.data.uid == request.auth.uid && isValidId(username);
+      allow update, delete: if false;
+    }
+
+    // 3. Communities & Businesses
+    match /communities/{communityId} {
+      allow get, list: if true;
+      allow create: if isSignedIn() && request.resource.data.ownerId == request.auth.uid && isValidId(communityId);
+      allow update: if isSignedIn() && isValidId(communityId) && (
+        resource.data.ownerId == request.auth.uid ||
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['memberCount', 'followerCount', 'postsCount', 'offersCount', 'rewardsCount', 'qrCode', 'updatedAt'])
+      );
+      allow delete: if isSignedIn() && resource.data.ownerId == request.auth.uid && isValidId(communityId);
+    }
+
+    match /businesses/{businessId} {
+      allow get, list: if true;
+      allow create: if isSignedIn() && request.resource.data.ownerId == request.auth.uid && isValidId(businessId);
+      allow update: if isSignedIn() && resource.data.ownerId == request.auth.uid && isValidId(businessId);
+      allow delete: if isSignedIn() && resource.data.ownerId == request.auth.uid && isValidId(businessId);
+    }
+
+    // 4. Posts, Community Posts & Comments
+    match /posts/{postId} {
+      allow get, list: if true;
+      allow create: if isSignedIn() && (request.resource.data.authorId == request.auth.uid || request.resource.data.ownerId == request.auth.uid) && isValidId(postId);
+      allow update: if isSignedIn() && isValidId(postId) && (
+        resource.data.authorId == request.auth.uid ||
+        resource.data.ownerId == request.auth.uid ||
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likesCount', 'commentsCount', 'sharesCount', 'savesCount', 'pinned', 'archived', 'updatedAt'])
+      );
+      allow delete: if isSignedIn() && (resource.data.authorId == request.auth.uid || resource.data.ownerId == request.auth.uid) && isValidId(postId);
+    }
+
+    match /communityPosts/{postId} {
+      allow get, list: if true;
+      allow create: if isSignedIn() && (request.resource.data.authorId == request.auth.uid || request.resource.data.ownerId == request.auth.uid) && isValidId(postId);
+      allow update: if isSignedIn() && isValidId(postId) && (
+        resource.data.authorId == request.auth.uid ||
+        resource.data.ownerId == request.auth.uid ||
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likesCount', 'commentsCount', 'sharesCount', 'savesCount', 'pinned', 'archived', 'updatedAt'])
+      );
+      allow delete: if isSignedIn() && (resource.data.authorId == request.auth.uid || resource.data.ownerId == request.auth.uid) && isValidId(postId);
+    }
+
+    match /comments/{commentId} {
+      allow get, list: if true;
+      allow create: if isSignedIn() && request.resource.data.authorId == request.auth.uid && isValidId(commentId);
+      allow update: if isSignedIn() && isValidId(commentId) && (
+        resource.data.authorId == request.auth.uid ||
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likesCount', 'updatedAt'])
+      );
+      allow delete: if isSignedIn() && resource.data.authorId == request.auth.uid && isValidId(commentId);
+    }
+
+    // 5. Social Engagements: Likes, Followers, Messages
+    match /likes/{likeId} {
+      allow get, list: if isSignedIn();
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid && isValidId(likeId);
+      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid && isValidId(likeId);
+      allow update: if false;
+    }
+
+    match /followers/{followId} {
+      allow get, list: if true;
+      allow create: if isSignedIn() && request.resource.data.followerId == request.auth.uid && isValidId(followId);
+      allow delete: if isSignedIn() && resource.data.followerId == request.auth.uid && isValidId(followId);
+      allow update: if false;
+    }
+
+    match /following/{followId} {
+      allow get, list: if isSignedIn();
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid && isValidId(followId);
+      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid && isValidId(followId);
+      allow update: if false;
+    }
+
+    match /savedPosts/{saveId} {
+      allow get, list: if isSignedIn();
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid && isValidId(saveId);
+      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid && isValidId(saveId);
+      allow update: if false;
+    }
+
+    match /joinedCommunities/{joinId} {
+      allow get, list: if isSignedIn();
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid && isValidId(joinId);
+      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid && isValidId(joinId);
+      allow update: if false;
+    }
+
+    match /communityMembers/{memberId} {
+      allow get, list: if isSignedIn();
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid && isValidId(memberId);
+      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid && isValidId(memberId);
+      allow update: if false;
+    }
+
+    match /messages/{messageId} {
+      allow get, list: if isSignedIn() && (
+        resource.data.senderId == request.auth.uid ||
+        resource.data.receiverId == request.auth.uid
+      );
+      allow create: if isSignedIn() && request.resource.data.senderId == request.auth.uid && isValidId(messageId);
+      allow delete: if isSignedIn() && resource.data.senderId == request.auth.uid;
+      allow update: if false;
+    }
+
+    match /notifications/{notificationId} {
+      allow get, list: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn();
+      allow update: if isSignedIn() && resource.data.userId == request.auth.uid &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['read']);
+      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+    }
+
+    // 6. Reward Points & History
+    match /reward_points/{userId} {
+      allow get, list: if isSignedIn();
+      allow create, update: if isSignedIn() && (
+        isOwner(userId) ||
+        request.auth.uid != null
+      );
+      allow delete: if false;
+    }
+
+    match /reward_history/{historyId} {
+      allow get, list: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid && isValidId(historyId);
+      allow update, delete: if false;
+    }
+
+    match /rewardHistory/{historyId} {
+      allow get, list: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid && isValidId(historyId);
+      allow update, delete: if false;
+    }
+
+    // 7. Offers & Rewards Catalogs
+    match /offers/{offerId} {
+      allow get, list: if true;
+      allow create, update, delete: if isSignedIn() && isValidId(offerId);
+    }
+
+    match /rewards/{rewardId} {
+      allow get, list: if true;
+      allow create, update, delete: if isSignedIn() && isValidId(rewardId);
+    }
+
+    // 8. Coupons & Coupon Redemption (prevents duplicate redemption)
+    match /coupons/{couponId} {
+      allow get, list: if true;
+      allow create, update, delete: if isSignedIn() && isValidId(couponId);
+    }
+
+    match /coupon_redemption/{redemptionId} {
+      allow get, list: if isSignedIn();
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid && isValidId(redemptionId);
+      allow update, delete: if false;
+    }
+
+    // 9. Events
+    match /events/{eventId} {
+      allow get, list: if true;
+      allow create, update, delete: if isSignedIn() && isValidId(eventId);
+    }
+
+    // 10. QR Codes (Verified system QR codes)
+    match /qr_codes/{qrId} {
+      allow get, list: if true;
+      allow create: if isSignedIn() && isValidId(qrId);
+      allow update: if isSignedIn() && isValidId(qrId);
+      allow delete: if isSignedIn() && isValidId(qrId);
+    }
+
+    // 11. Community Check-Ins & Checkins alias
+    match /check_ins/{checkInId} {
+      allow get, list: if isSignedIn();
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid && isValidId(checkInId);
+      allow update, delete: if false;
+    }
+
+    match /communityCheckins/{checkInId} {
+      allow get, list: if isSignedIn();
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid && isValidId(checkInId);
+      allow update, delete: if false;
+    }
+
+    // 12. Community Followers & Analytics
+    match /communityFollowers/{followId} {
+      allow get, list: if true;
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid && isValidId(followId);
+      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid && isValidId(followId);
+      allow update: if false;
+    }
+
+    match /communityOffers/{offerId} {
+      allow get, list: if true;
+      allow create, update, delete: if isSignedIn() && isValidId(offerId);
+    }
+
+    match /communityRewards/{rewardId} {
+      allow get, list: if true;
+      allow create, update, delete: if isSignedIn() && isValidId(rewardId);
+    }
+
+    match /communityAnalytics/{analyticsId} {
+      allow get, list: if true;
+      allow create, update: if isSignedIn() && isValidId(analyticsId);
+      allow delete: if false;
+    }
+  }
+}

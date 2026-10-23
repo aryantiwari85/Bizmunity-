@@ -1,0 +1,344 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile in Bizmunity",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "uid": { "type": "string" },
+        "username": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "phone": { "type": "string" },
+        "bio": { "type": "string" },
+        "avatar": { "type": "string" },
+        "followersCount": { "type": "number" },
+        "followingCount": { "type": "number" },
+        "joinedCommunitiesCount": { "type": "number" },
+        "createdCommunitiesCount": { "type": "number" },
+        "loyaltyPoints": { "type": "number" },
+        "badge": { "type": "string" },
+        "qrCode": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["uid", "username", "name"]
+    },
+    "Username": {
+      "title": "Username",
+      "description": "Global unique username registry",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["uid"]
+    },
+    "Community": {
+      "title": "Community",
+      "description": "Business or creator community in Bizmunity",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "handle": { "type": "string" },
+        "description": { "type": "string" },
+        "category": { "type": "string" },
+        "logoUrl": { "type": "string" },
+        "coverUrl": { "type": "string" },
+        "ownerId": { "type": "string" },
+        "memberCount": { "type": "number" },
+        "followerCount": { "type": "number" },
+        "rules": { "type": "string" },
+        "qrCode": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["name", "handle", "ownerId"]
+    },
+    "Business": {
+      "title": "Business",
+      "description": "Verified business entity linked to community",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "communityId": { "type": "string" },
+        "ownerId": { "type": "string" },
+        "name": { "type": "string" },
+        "category": { "type": "string" },
+        "description": { "type": "string" },
+        "location": { "type": "string" },
+        "website": { "type": "string" },
+        "loyaltyRate": { "type": "number" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["communityId", "ownerId", "name"]
+    },
+    "Post": {
+      "title": "Post",
+      "description": "A social post, announcement, offer or event",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "authorId": { "type": "string" },
+        "authorName": { "type": "string" },
+        "authorUsername": { "type": "string" },
+        "authorAvatar": { "type": "string" },
+        "communityId": { "type": "string" },
+        "content": { "type": "string" },
+        "mediaUrls": { "type": "array" },
+        "type": { "type": "string" },
+        "likesCount": { "type": "number" },
+        "commentsCount": { "type": "number" },
+        "savesCount": { "type": "number" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["authorId", "content", "type"]
+    },
+    "Comment": {
+      "title": "Comment",
+      "description": "A nested comment on a post",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "postId": { "type": "string" },
+        "authorId": { "type": "string" },
+        "authorName": { "type": "string" },
+        "authorUsername": { "type": "string" },
+        "authorAvatar": { "type": "string" },
+        "content": { "type": "string" },
+        "likesCount": { "type": "number" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["postId", "authorId", "content"]
+    },
+    "Like": {
+      "title": "Like",
+      "description": "User like on post or comment",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "targetId": { "type": "string" },
+        "targetType": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["userId", "targetId", "targetType"]
+    },
+    "Follow": {
+      "title": "Follow",
+      "description": "Follow relationship between users",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "followerId": { "type": "string" },
+        "targetId": { "type": "string" },
+        "targetType": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["followerId", "targetId", "targetType"]
+    },
+    "Message": {
+      "title": "Message",
+      "description": "Direct message between users",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "senderId": { "type": "string" },
+        "receiverId": { "type": "string" },
+        "content": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["senderId", "receiverId", "content"]
+    },
+    "Notification": {
+      "title": "Notification",
+      "description": "User notification event",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "actorId": { "type": "string" },
+        "actorName": { "type": "string" },
+        "actorUsername": { "type": "string" },
+        "actorAvatar": { "type": "string" },
+        "type": { "type": "string" },
+        "title": { "type": "string" },
+        "message": { "type": "string" },
+        "targetId": { "type": "string" },
+        "read": { "type": "boolean" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["userId", "type", "title", "message"]
+    },
+    "RewardPoint": {
+      "title": "RewardPoint",
+      "description": "User reward points ledger",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "points": { "type": "number" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["userId", "points"]
+    },
+    "RewardHistory": {
+      "title": "RewardHistory",
+      "description": "User redemption and earn history",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "businessId": { "type": "string" },
+        "businessName": { "type": "string" },
+        "points": { "type": "number" },
+        "type": { "type": "string" },
+        "description": { "type": "string" },
+        "date": { "type": "string" },
+        "time": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["userId", "points", "type"]
+    },
+    "Coupon": {
+      "title": "Coupon",
+      "description": "Business discount coupon",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "businessId": { "type": "string" },
+        "businessName": { "type": "string" },
+        "communityId": { "type": "string" },
+        "title": { "type": "string" },
+        "discountPercent": { "type": "number" },
+        "description": { "type": "string" },
+        "code": { "type": "string" },
+        "expiresAt": { "type": "string" },
+        "singleUse": { "type": "boolean" },
+        "active": { "type": "boolean" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["businessId", "title", "code", "discountPercent"]
+    },
+    "CouponRedemption": {
+      "title": "CouponRedemption",
+      "description": "Coupon redemption records to prevent duplicate scans",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "couponId": { "type": "string" },
+        "userId": { "type": "string" },
+        "businessId": { "type": "string" },
+        "code": { "type": "string" },
+        "redeemedAt": { "type": "string" }
+      },
+      "required": ["couponId", "userId", "redeemedAt"]
+    },
+    "Event": {
+      "title": "Event",
+      "description": "Community event meetup",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "communityId": { "type": "string" },
+        "organizerId": { "type": "string" },
+        "title": { "type": "string" },
+        "date": { "type": "string" },
+        "location": { "type": "string" },
+        "description": { "type": "string" },
+        "rsvpCount": { "type": "number" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["communityId", "title", "date"]
+    },
+    "QRCode": {
+      "title": "QRCode",
+      "description": "Verified system QR code reference",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "type": { "type": "string" },
+        "targetId": { "type": "string" },
+        "code": { "type": "string" },
+        "businessId": { "type": "string" },
+        "points": { "type": "number" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["type", "code"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/User" },
+      "description": "User profiles"
+    },
+    "/profiles/{userId}": {
+      "schema": { "$ref": "#/entities/User" },
+      "description": "Public profile mirror"
+    },
+    "/usernames/{username}": {
+      "schema": { "$ref": "#/entities/Username" },
+      "description": "Unique username index"
+    },
+    "/communities/{communityId}": {
+      "schema": { "$ref": "#/entities/Community" },
+      "description": "Communities directory"
+    },
+    "/businesses/{businessId}": {
+      "schema": { "$ref": "#/entities/Business" },
+      "description": "Registered business directory"
+    },
+    "/posts/{postId}": {
+      "schema": { "$ref": "#/entities/Post" },
+      "description": "Feed posts, announcements, and offers"
+    },
+    "/comments/{commentId}": {
+      "schema": { "$ref": "#/entities/Comment" },
+      "description": "Comments on posts"
+    },
+    "/likes/{likeId}": {
+      "schema": { "$ref": "#/entities/Like" },
+      "description": "Likes on posts and comments"
+    },
+    "/followers/{followId}": {
+      "schema": { "$ref": "#/entities/Follow" },
+      "description": "Follower graph"
+    },
+    "/messages/{messageId}": {
+      "schema": { "$ref": "#/entities/Message" },
+      "description": "Direct messages"
+    },
+    "/notifications/{notificationId}": {
+      "schema": { "$ref": "#/entities/Notification" },
+      "description": "User notifications"
+    },
+    "/reward_points/{userId}": {
+      "schema": { "$ref": "#/entities/RewardPoint" },
+      "description": "User loyalty points"
+    },
+    "/reward_history/{historyId}": {
+      "schema": { "$ref": "#/entities/RewardHistory" },
+      "description": "Redemption log"
+    },
+    "/coupons/{couponId}": {
+      "schema": { "$ref": "#/entities/Coupon" },
+      "description": "Discounts and coupon catalog"
+    },
+    "/coupon_redemption/{redemptionId}": {
+      "schema": { "$ref": "#/entities/CouponRedemption" },
+      "description": "Coupon redemption records"
+    },
+    "/events/{eventId}": {
+      "schema": { "$ref": "#/entities/Event" },
+      "description": "Community events"
+    },
+    "/qr_codes/{qrId}": {
+      "schema": { "$ref": "#/entities/QRCode" },
+      "description": "Verified QR code registry"
+    }
+  }
+}
